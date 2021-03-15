@@ -141,12 +141,12 @@ class ChessModel {
 
     fun movePieceAt(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int) {
         if (fromCol == toCol && fromRow == toRow) return
-        // Get piece at input location
+        // Get piece at touch's location
         val movingPiece = pieceAt(fromCol, fromRow) ?: return
         // Get piece at desired location
         // If another piece is already there -> removing it
         pieceAt(toCol, toRow)?.let {
-            if (it.player == movingPiece.player) {
+            if (movingPiece.player == it.player) {
                 return
             }
             pieces.remove(it)
