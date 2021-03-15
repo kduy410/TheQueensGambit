@@ -15,7 +15,7 @@ private const val TAG = "ChessBoard"
  */
 class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val paint = Paint()
-    private val scaleFactor = 1.0f
+    private val scaleFactor = 0.9f
     private var cellSize = 130f
     private var originX = 20f // From left -> right
     private var originY = 200f // From top -> bottom
