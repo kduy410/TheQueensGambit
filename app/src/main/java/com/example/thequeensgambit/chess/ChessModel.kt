@@ -1,24 +1,31 @@
 package com.example.thequeensgambit.chess
 
+import android.util.Log
 import com.example.thequeensgambit.R
 
 /**
  * This is MODEL
  */
+
 class ChessModel {
     var pieces = mutableSetOf<ChessPiece>()
 
     init {
         reset()
+
+        moveAt(1, 1, 1, 7)
+        Log.i(TAG, toString())
+        moveAt(1, 7, 0, 7)
+        Log.i(TAG, toString())
     }
 
     /**
      * Return the piece at row and column
      */
     fun pieceAt(col: Int, row: Int): ChessPiece? {
-        pieces.forEach {
-            if (col == it.column && row == it.row) {
-                return it
+        for(piece in pieces){
+            if (col == piece.column && row == piece.row) {
+                return piece
             }
         }
         return null
@@ -136,5 +143,21 @@ class ChessModel {
 
         desc += "  A B C D E F G H"
         return desc
+    }
+
+    fun moveAt(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int) {
+        // Get piece at input location
+        val movingPiece = pieceAt(fromCol, fromRow) ?: return
+        // Get piece at desired location
+        // If another piece is already there -> removing it
+        pieceAt(toCol, toRow)?.let {
+            if(it.player == movingPiece.player){
+                return
+            }
+            pieces.remove(it)
+        }
+
+        movingPiece.column = toCol
+        movingPiece.row = toRow
     }
 }

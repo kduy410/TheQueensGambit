@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
         var chessBoard = findViewById<ChessBoard>(R.id.chess_board).let {
             it.chessDelegate = this
         }
+
     }
 
     override fun pieceAt(col: Int, row: Int): ChessPiece? {

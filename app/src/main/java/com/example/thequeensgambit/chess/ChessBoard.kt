@@ -8,7 +8,7 @@ import com.example.thequeensgambit.R
 import kotlin.math.min
 
 
-private const val TAG = "ChessBoard"
+const val TAG = "ChessBoard"
 
 /**
  * This is VIEW
@@ -44,9 +44,9 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
 
     var chessDelegate: ChessDelegate? = null
 
-        init {
-            loadBitmaps()
-        }
+    init {
+        loadBitmaps()
+    }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -86,7 +86,7 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
     }
 
     private fun drawPieces(canvas: Canvas?) {
-        for (row in 7 downTo 0) {
+        for (row in 0..7) {
             for (col in 0..7) {
                 chessDelegate?.pieceAt(col, row)?.let {
                     drawPieceAt(canvas, col, row, it.resID)
