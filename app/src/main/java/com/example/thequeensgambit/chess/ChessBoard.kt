@@ -3,6 +3,7 @@ package com.example.thequeensgambit.chess
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import com.example.thequeensgambit.R
 import kotlin.math.min
@@ -43,6 +44,12 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
     private val bitmaps = mutableMapOf<Int, Bitmap>()
 
     var chessDelegate: ChessDelegate? = null
+    var fromCol: Int = -1
+    var fromRow: Int = -1
+    var movingPieceX: Float = -1f
+    var movingPieceY: Float = -1f
+    var movingPieceBitmap: Bitmap? = null
+    var movingPiece: ChessPiece? = null
 
     init {
         loadBitmaps()
@@ -88,10 +95,31 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
     private fun drawPieces(canvas: Canvas?) {
         for (row in 0..7) {
             for (col in 0..7) {
+//                if (col != fromCol || row != fromRow) {
+//                    chessDelegate?.pieceAt(col, row)?.let {
+//                        drawPieceAt(canvas, col, row, it.resID)
+//                    }
+//                }
                 chessDelegate?.pieceAt(col, row)?.let {
-                    drawPieceAt(canvas, col, row, it.resID)
+                    if (it != movingPiece) {
+                        drawPieceAt(canvas, col, row, it.resID)
+                    }
                 }
             }
+        }
+
+        movingPieceBitmap?.let {
+            canvas?.drawBitmap(
+                it,
+                null,
+                RectF(
+                    movingPieceX - cellSize / 2,
+                    movingPieceY - cellSize / 2,
+                    movingPieceX + cellSize / 2,
+                    movingPieceY + cellSize / 2
+                ),
+                paint
+            )
         }
     }
 
@@ -114,5 +142,37 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
         imgResIDs.forEach {
             bitmaps[it] = BitmapFactory.decodeResource(resources, it)
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        event ?: return false
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                fromCol = ((event.x - originX) / cellSize).toInt()
+                fromRow = 7 - ((event.y - originY) / cellSize).toInt()
+
+                chessDelegate?.pieceAt(fromCol, fromRow)?.let {
+                    movingPiece = it
+                    movingPieceBitmap = bitmaps[it.resID]
+                }
+
+            }
+            MotionEvent.ACTION_UP -> {
+                val col = ((event.x - originX) / cellSize).toInt()
+                val row = 7 - ((event.y - originY) / cellSize).toInt()
+                chessDelegate?.movePieceAt(fromCol, fromRow, col, row)
+                movingPiece = null
+                movingPieceBitmap = null
+                fromCol = -1
+                fromRow = -1
+            }
+            MotionEvent.ACTION_MOVE -> {
+                movingPieceX = event.x
+                movingPieceY = event.y
+                invalidate()
+            }
+        }
+        return true
     }
 }

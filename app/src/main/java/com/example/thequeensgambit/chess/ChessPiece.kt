@@ -1,8 +1,8 @@
 package com.example.thequeensgambit.chess
 
 data class ChessPiece(
-    var column: Int,
-    var row: Int,
+    val column: Int,
+    val row: Int,
     val player: ChessPlayer,
     val rank: ChessRank,
     val resID: Int

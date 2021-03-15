@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
         setContentView(R.layout.activity_main)
         Log.i(TAG, "$chessModel")
 
-        var chessBoard = findViewById<ChessBoard>(R.id.chess_board).let {
+        findViewById<ChessBoard>(R.id.chess_board).let {
             it.chessDelegate = this
         }
 
@@ -28,5 +28,11 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
 
     override fun pieceAt(col: Int, row: Int): ChessPiece? {
         return chessModel.pieceAt(col, row)
+    }
+
+    override fun movePieceAt(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int) {
+
+        chessModel.movePieceAt(fromCol, fromRow, toCol, toRow)
+        findViewById<ChessBoard>(R.id.chess_board)?.invalidate()
     }
 }
