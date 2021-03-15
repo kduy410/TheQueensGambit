@@ -57,13 +57,10 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
         originY = (height - chessboardSize) / 2f
 
         drawChessboard(canvas)
-
-        val white_queen = bitmaps[R.drawable.queen_white]!!
-        canvas.drawBitmap(white_queen, null, Rect(0, 0, 600, 600), paint)
-
+        drawPieces(canvas)
     }
 
-    private fun drawChessboard(canvas: Canvas) {
+    private fun drawChessboard(canvas: Canvas?) {
         for (col in 0..7) {
             for (row in 0..7) {
                 drawSquare(canvas, col, row, (col + row) % 2 == 1)
@@ -71,14 +68,33 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
         }
     }
 
-    private fun drawSquare(canvas: Canvas, col: Int, row: Int, isDark: Boolean) {
+    private fun drawSquare(canvas: Canvas?, col: Int, row: Int, isDark: Boolean) {
         paint.color =
             if (isDark) darkColor else lightColor
-        canvas.drawRect(
+        canvas?.drawRect(
             originX + col * cellSize,
             originY + row * cellSize,
             originX + (col + 1) * cellSize,
             originY + (row + 1) * cellSize,
+            paint
+        )
+    }
+
+    private fun drawPieces(canvas: Canvas?) {
+        drawPieceAt(canvas, 0, 0, R.drawable.rook_white)
+    }
+
+    private fun drawPieceAt(canvas: Canvas?, col: Int, row: Int, resID: Int) {
+        val white_queen = bitmaps[resID]!!
+        canvas?.drawBitmap(
+            white_queen,
+            null,
+            RectF(
+                originX + col * cellSize,
+                originY + (7 - row) * cellSize,
+                originX + (col + 1) * cellSize,
+                originY + ((7 - row) + 1) * cellSize
+            ),
             paint
         )
     }
