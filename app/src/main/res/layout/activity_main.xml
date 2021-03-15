@@ -7,6 +7,7 @@
     tools:context=".MainActivity">
 
     <com.example.thequeensgambit.chess.ChessBoard
+        android:id="@+id/chess_board"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </RelativeLayout>

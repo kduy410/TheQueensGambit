@@ -10,6 +10,9 @@ import kotlin.math.min
 
 private const val TAG = "ChessBoard"
 
+/**
+ * This is VIEW
+ */
 class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
     private val paint = Paint()
     private val scaleFactor = 1.0f
@@ -39,9 +42,11 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
      */
     private val bitmaps = mutableMapOf<Int, Bitmap>()
 
-    init {
-        loadBitmaps()
-    }
+    var chessDelegate: ChessDelegate? = null
+
+        init {
+            loadBitmaps()
+        }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
@@ -63,12 +68,12 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
     private fun drawChessboard(canvas: Canvas?) {
         for (col in 0..7) {
             for (row in 0..7) {
-                drawSquare(canvas, col, row, (col + row) % 2 == 1)
+                drawSquareAt(canvas, col, row, (col + row) % 2 == 1)
             }
         }
     }
 
-    private fun drawSquare(canvas: Canvas?, col: Int, row: Int, isDark: Boolean) {
+    private fun drawSquareAt(canvas: Canvas?, col: Int, row: Int, isDark: Boolean) {
         paint.color =
             if (isDark) darkColor else lightColor
         canvas?.drawRect(
@@ -81,13 +86,19 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
     }
 
     private fun drawPieces(canvas: Canvas?) {
-        drawPieceAt(canvas, 0, 0, R.drawable.rook_white)
+        for (row in 7 downTo 0) {
+            for (col in 0..7) {
+                chessDelegate?.pieceAt(col, row)?.let {
+                    drawPieceAt(canvas, col, row, it.resID)
+                }
+            }
+        }
     }
 
     private fun drawPieceAt(canvas: Canvas?, col: Int, row: Int, resID: Int) {
-        val white_queen = bitmaps[resID]!!
+        val piece = bitmaps[resID]!!
         canvas?.drawBitmap(
-            white_queen,
+            piece,
             null,
             RectF(
                 originX + col * cellSize,

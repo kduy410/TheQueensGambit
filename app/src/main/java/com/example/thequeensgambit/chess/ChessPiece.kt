@@ -4,5 +4,6 @@ data class ChessPiece(
     var column: Int,
     var row: Int,
     val player: ChessPlayer,
-    val rank: ChessRank
+    val rank: ChessRank,
+    val resID: Int
 )
