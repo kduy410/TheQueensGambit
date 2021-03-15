@@ -1,9 +1,7 @@
 package com.example.thequeensgambit.chess
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import com.example.thequeensgambit.R
@@ -20,6 +18,7 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
     private var originY = 200f // From top -> bottom
     private val lightColor = Color.parseColor("#EEEEEE")
     private val darkColor = Color.parseColor("#BBBBBB")
+
     private val imgResIDs = setOf(
         R.drawable.bishop_black,
         R.drawable.bishop_white,
@@ -35,6 +34,15 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
         R.drawable.pawn_white,
     )
 
+    /**
+     * Map resource id and bitmap
+     */
+    private val bitmaps = mutableMapOf<Int, Bitmap>()
+
+    init {
+        loadBitmaps()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val smaller = min(widthMeasureSpec, heightMeasureSpec)
@@ -49,11 +57,15 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
         originY = (height - chessboardSize) / 2f
 
         drawChessboard(canvas)
+
+        val white_queen = bitmaps[R.drawable.queen_white]!!
+        canvas.drawBitmap(white_queen, null, Rect(0, 0, 600, 600), paint)
+
     }
 
     private fun drawChessboard(canvas: Canvas) {
-        for (col in 0 until 8) {
-            for (row in 0 until 8) {
+        for (col in 0..7) {
+            for (row in 0..7) {
                 drawSquare(canvas, col, row, (col + row) % 2 == 1)
             }
         }
@@ -69,5 +81,11 @@ class ChessBoard(context: Context?, attrs: AttributeSet?) : View(context, attrs)
             originY + (row + 1) * cellSize,
             paint
         )
+    }
+
+    private fun loadBitmaps() {
+        imgResIDs.forEach {
+            bitmaps[it] = BitmapFactory.decodeResource(resources, it)
+        }
     }
 }
