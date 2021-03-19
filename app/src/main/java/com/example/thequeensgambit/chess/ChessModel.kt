@@ -25,7 +25,7 @@ class ChessModel {
         return null
     }
 
-    private fun reset() {
+    fun reset() {
         pieces.removeAll(pieces)
         for (i in 0..1) {
             pieces.add(

@@ -2,6 +2,7 @@ package com.example.thequeensgambit
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.thequeensgambit.chess.ChessBoard
 import com.example.thequeensgambit.chess.ChessDelegate
@@ -15,15 +16,19 @@ const val TAG = "MainActivity"
  */
 class MainActivity : AppCompatActivity(), ChessDelegate {
     var chessModel = ChessModel()
+    lateinit var chessView: ChessBoard
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         Log.i(TAG, "$chessModel")
 
-        findViewById<ChessBoard>(R.id.chess_board).let {
-            it.chessDelegate = this
+        chessView = findViewById<ChessBoard>(R.id.chess_board).apply {
+            this.chessDelegate = this@MainActivity
         }
-
+        findViewById<Button>(R.id.btn_reset).setOnClickListener {
+            chessModel.reset()
+            chessView.invalidate()
+        }
     }
 
     override fun pieceAt(col: Int, row: Int): ChessPiece? {
