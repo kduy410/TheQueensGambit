@@ -6,7 +6,7 @@ import com.example.thequeensgambit.R
  * This is MODEL
  */
 
-class ChessModel {
+object ChessGame {
     var pieces = mutableSetOf<ChessPiece>()
 
     init {

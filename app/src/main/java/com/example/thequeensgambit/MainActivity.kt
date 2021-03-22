@@ -6,7 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.thequeensgambit.chess.ChessBoard
 import com.example.thequeensgambit.chess.ChessDelegate
-import com.example.thequeensgambit.chess.ChessModel
+import com.example.thequeensgambit.chess.ChessGame
 import com.example.thequeensgambit.chess.ChessPiece
 import java.io.PrintWriter
 import java.net.ServerSocket
@@ -20,7 +20,6 @@ const val TAG = "MainActivity"
  * Model - View - Controller
  */
 class MainActivity : AppCompatActivity(), ChessDelegate {
-    private var chessModel = ChessModel()
     private lateinit var chessView: ChessBoard
     private var printWriter: PrintWriter? = null
     private val PORT: Int = 50001
@@ -28,13 +27,13 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Log.i(TAG, "$chessModel")
+        Log.i(TAG, "$ChessGame")
 
         chessView = findViewById<ChessBoard>(R.id.chess_board).apply {
             this.chessDelegate = this@MainActivity
         }
         findViewById<Button>(R.id.btn_reset).setOnClickListener {
-            chessModel.reset()
+            ChessGame.reset()
             chessView.invalidate()
         }
         /**
@@ -47,7 +46,6 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
 
         findViewById<Button>(R.id.btn_connect).setOnClickListener {
             Log.d(TAG, "Socket  client connecting to port:[$PORT]...")
-
             Executors.newSingleThreadExecutor().execute {
                 try {
                     val socket = Socket("192.168.232.2", PORT) // 172.16.2.4
@@ -70,15 +68,19 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
     }
 
     override fun pieceAt(col: Int, row: Int): ChessPiece? {
-        return chessModel.pieceAt(col, row)
+        return ChessGame.pieceAt(col, row)
     }
 
     override fun movePieceAt(fromCol: Int, fromRow: Int, toCol: Int, toRow: Int) {
-        chessModel.movePieceAt(fromCol, fromRow, toCol, toRow)
+        Log.d(TAG, "$fromCol,$fromRow,$toCol,$toRow")
+        if (fromCol == toCol && fromRow == toRow) {
+            return
+        }
+        ChessGame.movePieceAt(fromCol, fromRow, toCol, toRow)
         chessView.invalidate()
+        // When don't use socket it will not create a new Thread
         printWriter?.let {
             val moveStr = "$fromCol,$fromRow,$toCol,$toRow"
-            Log.d(TAG, moveStr)
             Executors.newSingleThreadExecutor().execute {
                 it.println(moveStr)
             }
@@ -94,7 +96,9 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
                     it.toInt()
                 }
                 runOnUiThread {
-                    movePieceAt(move[0], move[1], move[2], move[3]) // L - T - R - B
+//                    movePieceAt(move[0], move[1], move[2], move[3]) // L - T - R - B
+                    ChessGame.movePieceAt(move[0], move[1], move[2], move[3])
+                    chessView.invalidate()
                 }
             }
         }
