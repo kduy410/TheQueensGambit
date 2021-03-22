@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), ChessDelegate {
             Log.d(TAG, "Socket  client connecting to port:[$PORT]...")
             Executors.newSingleThreadExecutor().execute {
                 try {
-                    val socket = Socket("192.168.232.2", PORT) // 172.16.2.4
+                    val socket = Socket("192.168.1.2", PORT) // 172.16.2.4
                     receiveMove(socket)
                 } catch (e: Exception) {
                     e.printStackTrace()
